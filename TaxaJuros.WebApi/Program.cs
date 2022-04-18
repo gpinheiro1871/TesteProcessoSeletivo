@@ -16,9 +16,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+const decimal taxa = 0.01m;
+
 app.MapGet("/", () =>
-{
-    throw new NotImplementedException();
-});
+    {
+        return Results.Ok(taxa);
+    })
+    .Produces<decimal>(StatusCodes.Status200OK);
 
 app.Run();
