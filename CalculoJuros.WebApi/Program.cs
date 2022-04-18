@@ -1,3 +1,5 @@
+using CalculoJuros.WebApi.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,25 +7,40 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient<ITaxaJurosService, TaxaJurosService>();
+builder.Services.AddTransient<ITaxaJurosService, TaxaJurosService>();
+builder.Services.AddTransient<IJurosService, JurosService>();
+
 var app = builder.Build();
 
+const string taxaJurosPath = "https://localhost:7047/";
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/calculajuros", () =>
-{
-    throw new NotImplementedException();
-});
+app.MapGet("/calculajuros",
+    async (IJurosService calculoService, ITaxaJurosService taxaService,
+    decimal valorInicial, int meses) =>
+    {
+        decimal taxaDeJuros = await taxaService.ObterTaxaDeJuros(taxaJurosPath);
+
+        decimal juros = calculoService.CalcularJuros(valorInicial, taxaDeJuros, meses);
+
+        decimal response = Math.Truncate(juros * 100) / 100;
+
+        return Results.Ok(response);
+    })
+    .Produces<decimal>(StatusCodes.Status200OK);
 
 app.MapGet("/showmethecode", () =>
-{
-    throw new NotImplementedException();
-});
+    {
+        throw new NotImplementedException();
+    });
 
 app.Run();
+
+// Adicionar visibilidade para o projeto de testes
+public partial class Program { }
