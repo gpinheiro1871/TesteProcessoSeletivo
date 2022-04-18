@@ -16,7 +16,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-const decimal taxa = 0.01m;
+var taxa = app.Configuration.GetValue<decimal>("TaxaDeJuros");
 
 app.MapGet("/", () =>
     {

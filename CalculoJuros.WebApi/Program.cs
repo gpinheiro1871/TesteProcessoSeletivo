@@ -13,7 +13,7 @@ builder.Services.AddTransient<IJurosService, JurosService>();
 
 var app = builder.Build();
 
-const string taxaJurosPath = "https://localhost:7047/";
+var taxaJurosPath = app.Configuration.GetValue<string>("TaxaDeJurosPath");
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
