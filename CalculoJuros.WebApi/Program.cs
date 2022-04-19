@@ -14,6 +14,7 @@ builder.Services.AddTransient<IJurosService, JurosService>();
 var app = builder.Build();
 
 var taxaJurosPath = app.Configuration.GetValue<string>("TaxaDeJurosPath");
+var repoRemotoUri = app.Configuration.GetValue<string>("RemoteRepoUri");
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
@@ -35,10 +36,7 @@ app.MapGet("/calculajuros",
     })
     .Produces<decimal>(StatusCodes.Status200OK);
 
-app.MapGet("/showmethecode", () =>
-    {
-        throw new NotImplementedException();
-    });
+app.MapGet("/showmethecode", () => repoRemotoUri);
 
 app.Run();
 
